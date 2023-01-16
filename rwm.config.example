@@ -1,0 +1,113 @@
+﻿; STARTUP
+autostartfile := a_scriptdir . "\autostart.ahk"
+shellrun(autostartfile)
+
+; SPIN CLICK
++wheeldown::
++wheelup::
+click
+return
+
+; TASKKILL
+f1::
+winget, appname, processname, a
+run, taskkill /f /im "%appname%", , hide
+return
+
+^+!c::
+inputbox, answer, Terminate Process, What process do you want to terminate?
+run, taskkill /f /im "%answer%", , hide
+return
+
+^+!h::
+msgbox,
+(
+    F1 - Terminates the current active window
+    Control+Shift+Alt+h - Shows help window
+    Control+Shift+Alt+c - Enter process name to terminate
+)
+return
+
+; TTS
+^+!a::
+clipboard := ""
+send ^c
+clipwait, 0.5
+say := clipboard
+comobjcreate("sapi.spvoice").speak(say)
+return
+
+; ON TOP MAKER
+#+t:: winset, alwaysontop, , a
+
+; -------------------------------------------
+
+; KEYBINDINGS
+
+#p::
+send, #s
+return
+
+#h::
+shellrun("taskmgr")
+return
+
+#enter::
+shellrun("wt")
+return
+
+#q::
+reload
+return
+
+#+c::
+winclose, a
+return
+
+#+q::
+exitapp
+return
+
+#+enter::
+shellrun("explorer")
+return
+
+^!c::
+shellrun("calc")
+return
+
+^!g::
+shellrun("chrome")
+return
+
+^!q::
+shellrun("C:\Users\winni\AppData\Roaming\Microsoft\Windows\Start Menu\qutebrowser.lnk")
+return
+
+^!e::
+shellrun("C:\Users\winni\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Emacs-28.2\Emacs (Client).lnk")
+return
+
+^!n::
+shellrun("notepad")
+return
+
+^!t::
+winmaximize, a
+return
+
+^+!t::
+winmaximize, a
+return
+
+^+!m::
+send, {f11}
+return
+
+^+!f::
+winmaximize, a
+return
+
+^+!s::
+shellrun("ms-settings:apps-volume")
+return

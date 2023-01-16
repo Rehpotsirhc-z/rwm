@@ -1,0 +1,12 @@
+﻿setworkingdir, %userprofile%
+
+run(program, arguments)
+{
+    process, exist, %program%
+    if not errorlevel
+    {
+        run, %program% %arguments%, , hide
+    }
+}
+
+run("emacs.exe", "--daemon")
