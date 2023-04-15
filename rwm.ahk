@@ -20,14 +20,17 @@ if (!a_isadmin)
     exitapp
 }
 
+; Disable Error
+ComObjError(false)
+
 ; Functions
 shellrun(prms*)
 {
-    shellwindows := comobjcreate("{9ba05972-f6a8-11cf-a442-00a0c90a8f39}")
+    shellwindows := comobjcreate("{9BA05972-F6A8-11CF-A442-00A0C90A8F39}")
     desktop := shellwindows.item(comobj(19, 8))
     if ptlb := comobjquery(desktop
-        , "{4c96be40-915c-11cf-99d3-00aa004ae837}"
-    , "{000214e2-0000-0000-c000-000000000046}")
+        , "{4C96BE40-915C-11CF-99D3-00AA004AE837}"
+        , "{000214E2-0000-0000-C000-000000000046}")
     {
         if dllcall(numget(numget(ptlb+0)+15*a_ptrsize), "ptr", ptlb, "ptr*", psv:=0) = 0
         {
