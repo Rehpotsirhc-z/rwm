@@ -1,160 +1,108 @@
-﻿#noenv
-sendmode input
-setwindelay, 2
-coordmode, mouse
-setworkingdir %a_scriptdir%
-#singleinstance, force
-#notrayicon
+﻿SendMode("input")
+SetWorkingDir(A_ScriptDir)
+#SingleInstance force
+#NoTrayIcon
 
-; Set Icon
-icon := a_scriptdir . "\icons\icon.ico"
-if fileexist(icon)
+; SET ICON
+icon := A_ScriptDir . "\icons\icon.ico"
+if FileExist(icon)
 {
-    menu, tray, icon, %icon%
+    TraySetIcon(icon)
 }
 
-; Run As Administrator
-if (!a_isadmin)
-{
-    run *runas "%a_scriptfullpath%", , useerrorlevel
-    exitapp
-}
-
-; Disable Error
-ComObjError(false)
-
-; Functions
-shellrun(prms*)
-{
-    shellwindows := comobjcreate("{9BA05972-F6A8-11CF-A442-00A0C90A8F39}")
-    desktop := shellwindows.item(comobj(19, 8))
-    if ptlb := comobjquery(desktop
-        , "{4C96BE40-915C-11CF-99D3-00AA004AE837}"
-        , "{000214E2-0000-0000-C000-000000000046}")
+; RUN AS ADMINISTRATOR
+if (!A_IsAdmin){
     {
-        if dllcall(numget(numget(ptlb+0)+15*a_ptrsize), "ptr", ptlb, "ptr*", psv:=0) = 0
+        ErrorLevel := "ERROR"
+        Try ErrorLevel := Run("*RunAs `"" A_ScriptFullPath "`"", , "", )
+    }
+    ExitApp()
+}
+
+; OPTIONS
+SetWinDelay(2)
+CoordMode("Mouse")
+A_HotkeyInterval := 0
+
+; FUNCTIONS
+ShellRun(Prms*)
+{
+    ShellWindows := ComObject("Shell.Application").Windows
+    Desktop := ShellWindows.FindWindowSW(0, 0, 8, 0, 1)
+
+    TLB := ComObjQuery(Desktop, "{4C96BE40-915C-11CF-99D3-00AA004AE837}", "{000214E2-0000-0000-C000-000000000046}")
+
+    ComCall(15, TLB, "ptr*", SV := ComValue(13, 0))
+    NumPut("int64", 0x20400, "int64", 0x46000000000000C0, IID_IDispatch := Buffer(16))
+    ComCall(15, SV, "uint", 0, "ptr", IID_IDispatch, "ptr*", SFVD := ComValue(9, 0))
+
+    Shell := SFVD.Application
+    Shell.ShellExecute(Prms*)
+}
+
+; WINDOW MANAGER ACTIONS
+#LButton::
+{
+    MouseGetPos(&Window_X1, &Window_Y1, &Window_id)
+    Window_Win := WinGetMinMax("ahk_id " Window_id)
+
+    if !Window_Win
+    {
+        WinGetPos(&Window_WinX1, &Window_WinY1, , , "ahk_id " Window_id)
+
+        Loop
         {
-            varsetcapacity(iid_idispatch, 16)
-            numput(0x46000000000000c0, numput(0x20400, iid_idispatch, "int64"), "int64")
-            dllcall(numget(numget(psv+0)+15*a_ptrsize), "ptr", psv, "uint", 0, "ptr", &iid_idispatch, "ptr*", pdisp:=0)
-            shell := comobj(9, pdisp, 1).application
-            shell.shellexecute(prms*)
-            objrelease(psv)
+            Window_Button := GetKeyState("LButton", "P") ? "D" : "U"
+
+            if (Window_Button = "U")
+                break
+
+            MouseGetPos(&Window_X2, &Window_Y2)
+            Window_X2 -= Window_X1
+            Window_Y2 -= Window_Y1
+            Window_WinX2 := (Window_WinX1 + Window_X2)
+            Window_WinY2 := (Window_WinY1 + Window_Y2)
+            WinMove(Window_WinX2, Window_WinY2, , , "ahk_id " Window_id)
         }
-        objrelease(ptlb)
     }
 }
 
-; Include User Configuration
-#include %a_scriptdir%\rwm.config
+#RButton::
+{
+    MouseGetPos(&Window_X1, &Window_Y1, &Window_id)
+    Window_Win := WinGetMinMax("ahk_id " Window_id)
 
-; Window Manager Actions
-#lbutton::
-if doublealt
-{
-    mousegetpos, , , window_id
-    postmessage, 0x112, 0xf020, , , ahk_id %window_id%
-    doublealt := false
-    return
-}
-mousegetpos, window_x1, window_y1, window_id
-winget, window_win, minmax, ahk_id %window_id%
-if window_win
-    winrestore, a
-wingetpos, window_winx1, window_winy1, , , ahk_id %window_id%
-loop
-{
-    getkeystate, window_button, lbutton, p
-    if window_button = u
-        break
-    mousegetpos, window_x2, window_y2
-    window_x2 -= window_x1
-    window_y2 -= window_y1
-    window_winx2 := (window_winx1 + window_x2)
-    window_winy2 := (window_winy1 + window_y2)
-    winmove, ahk_id %window_id%, , %window_winx2%, %window_winy2%
-}
-return
-wingetpos, window_winx1, window_winy1, , , ahk_id %window_id%
-loop
-{
-    getkeystate, window_button, lbutton, p
-    if window_button = u
-        break
-    mousegetpos, window_x2, window_y2
-    window_x2 -= window_x1
-    window_y2 -= window_y1
-    window_winx2 := (window_winx1 + window_x2)
-    window_winy2 := (window_winy1 + window_y2)
-    winmove, ahk_id %window_id%, , %window_winx2%, %window_winy2%
-}
-return
+    if !Window_Win
+    {
+        WinGetPos(&Window_WinX1, &Window_WinY1, &Window_WinW, &Window_WinH, "ahk_id " Window_id)
 
-#rbutton::
-if doublealt
-{
-    mousegetpos, , , window_id
-    winget, window_win, minmax, ahk_id %window_id%
-    if window_win
-        winrestore, ahk_id %window_id%
-    else
-        winmaximize, ahk_id %window_id%
-    doublealt := false
-    return
+        if (Window_X1 < Window_WinX1 + Window_WinW / 2)
+            Window_WinLeft := 1
+        else
+            Window_WinLeft := -1
+
+        if (Window_Y1 < Window_WinY1 + Window_WinH / 2)
+            Window_WinUp := 1
+        else
+            Window_WinUp := -1
+
+        Loop
+        {
+            Window_Button := GetKeyState("RButton", "P") ? "D" : "U"
+
+            if (Window_Button = "U")
+                break
+
+            MouseGetPos(&Window_X2, &Window_Y2)
+            WinGetPos(&Window_WinX1, &Window_WinY1, &Window_WinW, &Window_WinH, "ahk_id " Window_id)
+            Window_X2 -= Window_X1
+            Window_Y2 -= Window_Y1
+            WinMove(Window_WinX1 + (Window_WinLeft+1)/2*Window_X2, Window_WinY1 +   (Window_WinUp+1)/2*Window_Y2, Window_WinW  -     Window_WinLeft  *Window_X2, Window_WinH  -       Window_WinUp  *Window_Y2, "ahk_id " Window_id)
+            Window_X1 := (Window_X2 + Window_X1)
+            Window_Y1 := (Window_Y2 + Window_Y1)
+        }
+    }
 }
-mousegetpos, window_x1, window_y1, window_id
-winget, window_win, minmax, ahk_id %window_id%
-if window_win
-    winrestore, a
-wingetpos, window_winx1, window_winy1, window_winw, window_winh, ahk_id %window_id%
-if (window_x1 < window_winx1 + window_winw / 2)
-    window_winleft := 1
-else
-    window_winleft := -1
-if (window_y1 < window_winy1 + window_winh / 2)
-    window_winup := 1
-else
-    window_winup := -1
-loop
-{
-    getkeystate, window_button, rbutton, p
-    if window_button = u
-        break
-    mousegetpos, window_x2, window_y2
-    wingetpos, window_winx1, window_winy1, window_winw, window_winh, ahk_id %window_id%
-    window_x2 -= window_x1
-    window_y2 -= window_y1
-    winmove, ahk_id %window_id%, , window_winx1 + (window_winleft+1)/2*window_x2
-    , window_winy1 +   (window_winup+1)/2*window_y2
-    , window_winw  -     window_winleft  *window_x2
-    , window_winh  -       window_winup  *window_y2
-    window_x1 := (window_x2 + window_x1)
-    window_y1 := (window_y2 + window_y1)
-}
-return
-wingetpos, window_winx1, window_winy1, window_winw, window_winh, ahk_id %window_id%
-if (window_x1 < window_winx1 + window_winw / 2)
-    window_winleft := 1
-else
-    window_winleft := -1
-if (window_y1 < window_winy1 + window_winh / 2)
-    window_winup := 1
-else
-    window_winup := -1
-loop
-{
-    getkeystate, window_button, rbutton, p
-    if window_button = u
-        break
-    mousegetpos, window_x2, window_y2
-    wingetpos, window_winx1, window_winy1, window_winw, window_winh, ahk_id %window_id%
-    window_x2 -= window_x1
-    window_y2 -= window_y1
-    winmove, ahk_id %window_id%, , window_winx1 + (window_winleft+1)/2*window_x2
-    , window_winy1 +   (window_winup+1)/2*window_y2
-    , window_winw  -     window_winleft  *window_x2
-    , window_winh  -       window_winup  *window_y2
-    window_x1 := (window_x2 + window_x1)
-    window_y1 := (window_y2 + window_y1)
-}
-return
+
+; INCLUDE USER CONFIGURATION
+#Include "rwm.config"

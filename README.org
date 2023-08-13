@@ -7,7 +7,7 @@ rwm is a "window manager" for the MS Windows Operating System. The name is inspi
 rwm provides some basic window management features. Although it does not support tiling, you can drag windows around by holding down the Super or Windows key while clicking and dragging your mouse on the window. It is similar to moving windows around by dragging the top bar, but this way you can move it from anywhere in the window. You can also resize windows in rwm by doing the same thing but using your right mouse button to drag.
 
 * Dependencies
-rwm does not have many dependencies. The only dependency is AutoHotKey, the programming language used to write this program. You also need to be using Windows.
+rwm does not have many dependencies. The only dependency is AutoHotkey, the programming language used to write this program. You also need to be using Windows.
 
 * Configuration
-rwm is configured like most window manager: by using a config file. The config file has to be named =rwm.config= in the same directory as =rwm.ahk=. It is required and rwm will not start if you do not have it. The configuration file is to be written in AHK. An example configuration has been included for reference. The example configuration includes an =autostart.ahk= for programs to autostart.
+rwm is configured like most window managers: by using a config file. The config file has to be named =rwm.config= in the same directory as =rwm.ahk=. It is required and rwm will not start if you do not have it. The configuration file is to be written in AHK. An example configuration has been included for reference. The example configuration includes an =autostart.ahk= for programs to autostart.

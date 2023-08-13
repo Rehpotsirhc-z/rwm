@@ -1,12 +1,12 @@
-﻿setworkingdir, %userprofile%
+﻿SetWorkingDir(EnvGet("USERPROFILE"))
 
-run(program, arguments)
+RwmRun(Program, Arguments)
 {
-    process, exist, %program%
-    if not errorlevel
+    ErrorLevel := ProcessExist(program)
+    if !ErrorLevel
     {
-        run, %program% %arguments%, , hide
+        Run(Program " " Arguments, , "hide")
     }
 }
 
-run("emacs.exe", "--daemon")
+;RwmRun("runemacs.exe", "--daemon")
