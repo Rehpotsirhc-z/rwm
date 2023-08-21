@@ -1,4 +1,4 @@
-﻿; -*- mode: ahk -*-
+; -*- mode: ahk -*-
 
 ; STARTUP
 ShellRun(A_ScriptDir "\autostart.ahk")

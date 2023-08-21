@@ -1,4 +1,4 @@
-﻿SendMode("input")
+SendMode("input")
 SetWorkingDir(A_ScriptDir)
 #SingleInstance force
 #NoTrayIcon

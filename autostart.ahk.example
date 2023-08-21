@@ -1,4 +1,4 @@
-﻿SetWorkingDir(EnvGet("USERPROFILE"))
+SetWorkingDir(EnvGet("USERPROFILE"))
 
 RwmRun(Program, Arguments)
 {
