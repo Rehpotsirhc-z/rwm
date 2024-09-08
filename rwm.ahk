@@ -40,6 +40,11 @@ ShellRun(Prms*)
     Shell.ShellExecute(Prms*)
 }
 
+RunHide(Program)
+{
+    Run(Program, "", "hide")
+}
+
 ; WINDOW MANAGER ACTIONS
 #LButton::
 {
