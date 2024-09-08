@@ -1,0 +1,140 @@
+; -*- mode: ahk -*-
+
+; STARTUP
+RunHide("komorebic start")
+ShellRun(A_ScriptDir "\autostart.ahk")
+
+; SPIN CLICK
++wheeldown::Click()
++wheelup::Click()
+
+; TASKKILL
+F1::RunHide("taskkill /f /im `"" WinGetProcessName("A") "`"")
+
+^#+c::
+{
+    Answer := InputBox("What process do you want to terminate?", "Terminate Process").Value
+    RunHide("taskkill /f /im `"" Answer "`"")
+}
+
+^#+h::MsgBox("
+(
+    F1 - Terminates the current active window
+    Control+Shift+Alt+h - Shows help window
+    Control+Shift+Alt+c - Enter process name to terminate
+)")
+
+; TTS
+#^a::
+{
+    Old_Clipboard := A_Clipboard
+    A_Clipboard := ""
+    Send("^c")
+    ErrorLevel := !ClipWait(0.5)
+    ComObject("sapi.spvoice").speak(A_Clipboard)
+    A_Clipboard := Old_Clipboard
+}
+
+; ON TOP MAKER
+#+t::WinSetAlwaysOnTop(-1, "A")
+
+; -------------------------------------------
+
+; KEYBINDINGS
+
+; Super Keys
+#Enter::Sleep(100), ShellRun("wt")
+^#Enter::Sleep(100), Run("wt") ; TODO
+#p::Send("!{Space}")
+
+; Reload Keys
+^#+q::ExitApp()
+#+q::Reload()
+#q::RunHide("komorebic reload-configuration")
+^#q::RunHide("komorebic stop"), RunHide("komorebic start")
+
+#+r::RunHide("komorebic retile")
+#+p::RunHide("komorebic toggle-pause")
+#+f::RunHide("komorebic manage")
+^#+f::RunHide("komorebic unmanage")
+
+; Applications
+#+enter::ShellRun("explorer")
+^!c::ShellRun("calc")
+^!h::ShellRun("taskmgr")
+^!n::ShellRun("notepad")
+^!p::ShellRun("C:\ProgramData\Microsoft\Windows\Start Menu\Programs\KeePassXC\KeePassXC.lnk")
+^!s::ShellRun("ms-settings:apps-volume")
+
+; System
+^!l::DllCall("LockWorkStation")
+
+; Window Management
+#+c::RunHide("komorebic close")
+#m::RunHide("komorebic minimize")
+
+#k::RunHide("komorebic cycle-focus previous")
+#j::RunHide("komorebic cycle-focus next")
+
+#+j::RunHide("komorebic move down")
+#+k::RunHide("komorebic move up")
+#+h::RunHide("komorebic promote")
+
+#left::RunHide("komorebic stack left")
+#down::RunHide("komorebic stack down")
+#up::RunHide("komorebic stack up")
+#right::RunHide("komorebic stack right")
+#`;::RunHide("komorebic unstack")
+#[::RunHide("komorebic cycle-stack previous")
+#]::RunHide("komorebic cycle-stack next")
+
+^#h::RunHide("komorebic resize-axis horizontal decrease")
+^#j::RunHide("komorebic resize-axis vertical increase")
+^#k::RunHide("komorebic resize-axis vertical decrease")
+^#l::RunHide("komorebic resize-axis horizontal increase")
+
+#y::{
+    if ProcessExist("yasb.exe") {
+        RunHide("taskkill /f /im yasb.exe")
+    } else {
+        ShellRun("yasb.exe")
+    }
+}
+
+^+!v::RunHide("komorebic toggle-float")
+^+!f::RunHide("komorebic toggle-monocle")
+^+!n::RunHide("komorebic toggle-maximize")
+^+!m::Send("{f11}")
+
+^+!x::RunHide("komorebic flip-layout horizontal")
+^+!y::RunHide("komorebic flip-layout vertical")
+^+!space::RunHide("komorebic cycle-layout next")
+
+^+!b::RunHide("komorebic change-layout bsp")
+^+!c::RunHide("komorebic change-layout columns")
+^+!r::RunHide("komorebic change-layout rows")
+^+!t::RunHide("komorebic change-layout vertical-stack")
+^+!o::RunHide("komorebic change-layout horizontal-stack")
+^+!u::RunHide("komorebic change-layout ultrawide-vertical-stack")
+^+!g::RunHide("komorebic change-layout grid")
+^+!i::RunHide("komorebic change-layout right-main-vertical-stack")
+
+#1::RunHide("komorebic focus-workspace 0")
+#2::RunHide("komorebic focus-workspace 1")
+#3::RunHide("komorebic focus-workspace 2")
+#4::RunHide("komorebic focus-workspace 3")
+#5::RunHide("komorebic focus-workspace 4")
+#6::RunHide("komorebic focus-workspace 5")
+#7::RunHide("komorebic focus-workspace 6")
+#8::RunHide("komorebic focus-workspace 7")
+#9::RunHide("komorebic focus-workspace 8")
+
+#+1::RunHide("komorebic move-to-workspace 0")
+#+2::RunHide("komorebic move-to-workspace 1")
+#+3::RunHide("komorebic move-to-workspace 2")
+#+4::RunHide("komorebic move-to-workspace 3")
+#+5::RunHide("komorebic move-to-workspace 4")
+#+6::RunHide("komorebic move-to-workspace 5")
+#+7::RunHide("komorebic move-to-workspace 6")
+#+8::RunHide("komorebic move-to-workspace 7")
+#+9::RunHide("komorebic move-to-workspace 8")
